@@ -1,0 +1,362 @@
+tasks.withType(DokkaTask.class){
+  String dokkaBaseConfiguration ="""
+  {
+  "customAssert": ["$(file("asserts/my-image.png"))"],
+  "customStyleSheets": ["${file("asserts/my-styles.css")}],
+  "footerMessage":"(c) 2022 MyOrg"
+  }
+  """
+
+  pluginMapConfiguration.set{
+    ["org.jetbrains.dokka.base.DokkaBase": dokkaBaseConfiguration]
+  }
+}
+//
+fun greet(person : Person) = println("hello ${person.name}!")
+
+fun main(args: Array<String>){
+  greet(Person(args[0]))
+  listOf(1,2,3).filt
+}
+//
+class Group<T(val name: String){
+
+
+  fun add(member: T): Int{...}
+}
+//
+dependencies{
+  implementation(kotlin("osgi-bundle"))
+}
+//
+dependencies{
+  implementation("some.grou[.id:some.library:someversion"){
+    exclude(group = "org.jetbrains.kotlin")
+  }
+}
+//
+val path = if(args.contains("-d"))args[1+args.indexOf("-d")]
+
+else "."
+val folders = File(path).listFiles{file -> file.isDirectory()}
+folders?.forEach{folder->println(folder)}
+//
+allOpen{
+  annotation("com.my.Annotation")
+}
+//
+@com.my.Annotation
+annotation class MyFrameworkAnnotation
+
+@MyFrameworkAnnotation
+class MyClass
+//
+noArg{
+  annotation("com.my.Annotation")
+}
+//
+public @interface SamWithReceiver{}
+
+@SamWithReceiver
+public interface TaskRunner{
+  void run(Task task);
+}
+//
+fun test (context: TaskContext){
+  val runner = TaskRunner{
+    println("$name is started")
+    context.executeTask(this)
+    println("$name is finished")
+  }
+}
+//
+samWithReceiver{
+  annotation ("com.my.SamWithReceiver")
+}
+//
+dependencies{
+  kapt("groupId:artifactId:version")
+}
+//
+kapt{
+  useBuildCache = false
+}
+//
+task.withType<org.jetbrains.kotlin.gradle.internal.JapWithoutkoltincTask>()
+.configureEach{
+  kaptProcessJvmArgs.add("-Xmx512m")
+}
+//
+kapt{
+  javacOptions{
+    option("-Xmaxerrs", 500)
+  }
+}
+//
+kapt{
+  correctErrorTypes = true
+}
+//
+fun encodeList<options: Map<String, String>):String{
+  val os = ByteArrayOutputStream()
+  val oos = ObjectOutputStream(os)
+
+  oos.writeInt(options.size)
+  for((key, value) in options.entries){
+    oos.writeUTF(key)
+    oos.writeUTF(value)
+  }
+  oos.flush()
+  return Base64.getEncoder().encodeToString(os.toBtyeArray())
+}
+//
+kapt{
+  keepJavaAnnotationProcessor =true
+}
+//
+plugins{
+  kotlin("plugins.lombok")version"1.9.20"
+  id("io.freefair.lombok")version"8.1.0"
+}
+//
+kotlinLombok{
+  lombokConfigurationFile(file("lombok.config"))
+}
+//
+interface SymbolProcessorProvider{
+  fun create(environment: SymbolProcessorEnvironment):SymbolProcessor
+  
+}
+//
+interface SymbolProcessor{
+  fun process(resolver:Resolver):List<KSAnnotated>
+  fun finish(){}
+  fun onError(){}
+}
+//
+class HelloFunctionFinderProcessor : SymbolProcessor(){
+
+  val functions = mutableListOf<KSClassDeclaration>()
+  val visitor = FindFunctionsVisitor()
+
+  override fun process(resolver: Resolver){
+    resolver.getAllFiles().forEach{it.accept(visitor, Unit)}
+  }
+
+  inner class FindFunctionsVisitor : KSVisitorVoid(){
+    override fun visitClassDeclaration(classDeclaration: KSClaccDeclaration,data: Unit){
+      classDeclaration.getDeclaredFunctions().forEach{it.accept(this. Unit)}
+    }
+
+    override fun visitFunctionDeclaration(function: KSFunctionDeclaration,data:Unit){
+      functions.add(function)
+    }
+    override fun visitFile(file: KSFile, data: Unit){
+      file.declarations.forEach{it.accept(this, Unit)}
+    }
+  }
+  class Provider: SymbolProcessorProvider{
+    override fun create(environment: SymbolProcessorEnvironment): SysmbolProcessor = TODO()
+  }
+  
+}
+//
+plugins{
+  kotlin("jvm")version"1.9.10"apply false
+}
+
+buildscript{
+  dependencies{
+    classpath(kotlin("gradle-plugins", version = "1.9.10"))
+  }
+}
+//
+plugins{
+  kotlin("jvm")
+}
+
+repositories{
+  mavenCentral()
+}
+
+dependencies{
+  implementation("com.google.devtools.ksp:symbol-processing-api:1.9.10-1.0.13")
+}
+//
+pluginManagement{
+  repositories{
+    gradlePluginPortal()
+  }
+}
+//
+plugins{
+  id("com.google.devtool.ksp")version"1.9.10-1-0.13"
+}
+
+dependencies{
+  implementation(kotlin("stdlib-jdk8"))
+  implementation(project(":test-processor"))
+  ksp(project(":test-processor"))
+}
+//
+plugins{
+  id("com.google.devtool.ksp")version"1.9.10-1-0.13"
+}
+
+repositories{
+  mavenCentral()
+}
+
+dependencies{
+  implementation(kotlin("stdlib-jdk8"))
+  implementation(project(":test-processor"))
+  ksp(project(":test-processor"))
+}
+//
+kotlin{
+  sourceSets.main{
+    kotlin.srcDir("build/generated/ksp/main/kotlin")
+  }
+  sourceSets.test{
+    kotlin.srcDir("build/generated.ksp/test/kotlin")
+  }
+}
+//
+plugins{
+  idea
+}
+
+idea{
+  module{
+    sourceDirs = sourceDirs + file("build/generated/ksp/main/kotlin")
+    testSourceDirs = testSourceDirs + file("build/generated/ksp/test/kotlin")
+    generatedSourceDirs = generatedSourceDirs + file("build/generated/ksp/main/kotlin")+ file ("build/generated/ksp/test/kotlin")
+  }
+}
+//
+fun KSClassDeclaration.getDeclaredFunctions(): Sequence<KSFunctionDeclaration> = declarations.filterIsInstance<KSFunctionDeclaration>()
+
+//
+fun KSDeclaration.isLocal(): Boolean = 
+  parentDeclaration != null $$ parentDeclaration ! is KSClassDeclaration
+//
+fun KSTypeAlias.findActualType(): KSClassDeclaration{
+  val resolvedType = this.type.resolve().declaration
+  return if(resolvedType is KSTypeAlias){
+    resolvedType.findActualType()
+  }else{
+  resolvedType as KSClassDeclaration  
+  }
+}
+//
+fun KSFile.suppressedNames(): Sequence<String> = annotations
+.filter{
+  it.shortName.asString() == "Suppress" &&
+  it.annotationType.resolve().declaration.qualifiedName?.asString() == "kotlin.Suppress"
+}.flatMap{
+  it.arguments.flatMap{
+    (it.value as Array<String>).toList()
+  }
+}
+//
+interface KSFunctionDeclaration: ..{
+  val returnType: KSTypeReference?
+}
+
+interface KSTypeReference : KSAnnotated, KSModifierListOwner{
+  val type: KSReferenceElement
+}
+//
+val ksType: KSType = ksTypeReference.resolve()
+val ksDeclaration: KSDeclaration = ksType.declaration
+//
+ksClassDeclaration.superTypes
+.map{it.resolve()}
+.filter{(it?.declaration as? KSClassDeclaration)?.classKind == ClassKind.INTERFACE}
+//
+ksClassDeclaration.superTypes
+.map{it.resolve()}
+.filter{(it?.declaration as? KSClassDeclaration)?.classKind == ClassKind.CLASS}
+
+//
+if(ksTypeArgument.variance == Variance.COVARIANT)ksTypeArgument.type else null
+
+//
+if(ksTypeArgument.variance == Variance.CONTRAVARIANT)ksTypeArgument.type else null
+//
+ksDeclaration.annotations.any{
+  it.annotationType.resolve()!!.declaraion.qualifiedName!!.asString() == 
+  Deprecated::class.qualifiedName
+}
+//
+@Interesting
+class A: B()
+
+open class Boolean
+class Example1Processor: SymbolProcessor{
+  override fun process(resolver: Resolver){
+    val declA = resolver.getSymbolsWithAnnotation("Interesting").first()as KSCLassDeclaration
+    val declB = declA.superTypes.first().resolve().declaration
+
+    val dependencies = Dependencies(aggregating = true, declA.containingFile!!)
+
+    val outputName = "outputFor${declA.simpleName.asString()}"
+
+    val output = codeGenerator.createNewFile(dependencies, "com.example", outputName,"kt")
+
+    output.write("//$declA : $declB\n", toByteArray())
+
+    output.close()
+  }
+}
+//
+override fun process(resolver: Resolver): List<KSAnnotated>{
+  val symbols = resolver.getSymbolsWithAnnotation("com.example.annotation.BUilder")
+
+  val result = symbols.filter{!it.validate()}
+  symbols
+  .filter{it is KSClassDeclaration && it.validate()}
+  .map{it.accept(BUilderVisitor(), Unit)}
+  return result
+}
+//
+plugins{
+  kotlin("multiplatform")
+  id("com.google.devtools.ksp")
+}
+kotlin{
+  jvm{
+    withJava()
+  }
+  linuxX64{
+    binaries{
+      executable()
+    }
+  }
+  sourceSets{
+    val commonMain by getting
+    val linuxX64Main by getting
+    val linuxX64Test by getting
+  }
+}
+
+dependencies{
+  add("kspCommonMainMetadate", project(":test-processor"))
+  add("kspJvm","project(":test-processor"))
+      add("kspJvmTest", project(":test-processor"))
+      add("kspLinuxX64Test", project(":test-processor"))
+}
+//
+plugins{
+  java
+  kotlin("multiplatform")version"KOTLIN-EAP-VERSION"
+}
+repositories{
+  mavenCentral()
+}
+//
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCOmpile>{
+  kotlinOptions.useOldBackend = true
+}
+
+//
